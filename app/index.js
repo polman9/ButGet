@@ -1,23 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { initializeDatabase, addTransaction, getTransactions } from '../db/database.js';
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import {
+  initializeDatabase,
+  addTransaction,
+  getTransactions,
+} from "../db/database.js";
 
 export default function HomeScreen() {
-  const [name, setName] = useState('');
-  const [amount, setAmount] = useState('');
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
   const [transactions, setTransactions] = useState([]); // State to store fetched transactions
 
   // Initialize the database when the component mounts
-  useEffect(() => {
-    initializeDatabase();
+  useEffect(async () => {
+    await initializeDatabase();
     loadTransactions();
   }, []);
 
   // Function to load transactions from SQLite database
   const loadTransactions = () => {
     getTransactions(
-      data => setTransactions(data),
-      error => console.error("Error loading transactions", error)
+      (data) => setTransactions(data),
+      (error) => console.error("Error loading transactions", error)
     );
   };
 
@@ -31,14 +35,14 @@ export default function HomeScreen() {
     addTransaction(
       name,
       parseFloat(amount),
-      'expense', // Assuming 'expense' type for now
+      "expense", // Assuming 'expense' type for now
       () => {
         console.log("Transaction Added");
-        setName('');
-        setAmount('');
+        setName("");
+        setAmount("");
         loadTransactions(); // Reload transactions after adding
       },
-      error => console.error("Error adding transaction", error)
+      (error) => console.error("Error adding transaction", error)
     );
   };
 
@@ -47,7 +51,7 @@ export default function HomeScreen() {
       {/* Add New Transaction Form */}
       <View style={styles.addExpense}>
         <Text style={styles.heading}>Add New Transaction</Text>
-        
+
         <View style={styles.form}>
           <Text style={styles.label}>Transaction Name</Text>
           <TextInput
@@ -56,7 +60,7 @@ export default function HomeScreen() {
             value={name}
             onChangeText={setName}
           />
-          
+
           <Text style={styles.label}>Amount</Text>
           <TextInput
             style={styles.input}
@@ -65,7 +69,7 @@ export default function HomeScreen() {
             value={amount}
             onChangeText={setAmount}
           />
-          
+
           <Button title="Add" onPress={handleAddTransaction} />
         </View>
       </View>
@@ -77,13 +81,17 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.partTransactions}>
-          {transactions.map(transaction => (
+          {transactions.map((transaction) => (
             <View key={transaction.id} style={styles.oneTransaction}>
               <View style={styles.oneTransactionPhoto}></View>
               <View style={styles.oneTransactionTittleAndPrice}>
                 <View style={styles.oneTransactionTittleAndDescription}>
-                  <Text style={styles.oneTransactionTittle}>{transaction.name}</Text>
-                  <Text style={styles.oneTransactionDescription}>Description</Text>
+                  <Text style={styles.oneTransactionTittle}>
+                    {transaction.name}
+                  </Text>
+                  <Text style={styles.oneTransactionDescription}>
+                    Description
+                  </Text>
                 </View>
                 <View style={styles.oneTransactionPrice}>
                   <Text>{transaction.amount}$</Text>
@@ -100,15 +108,15 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: "#f2f2f2",
   },
   addExpense: {
     padding: 20,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: "#f2f2f2",
   },
   heading: {
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   form: {
     padding: 20,
@@ -118,63 +126,63 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 0,
     borderRadius: 20,
     marginBottom: 15,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   transactions: {
-    backgroundColor: '#E7E7E7',
+    backgroundColor: "#E7E7E7",
     padding: 20,
   },
   partHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
   linkText: {
-    color: 'blue',
+    color: "blue",
   },
   partTransactions: {
     marginTop: 10,
   },
   oneTransaction: {
-    backgroundColor: 'white',
-    width: '100%',
+    backgroundColor: "white",
+    width: "100%",
     height: 60,
     borderRadius: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
     paddingHorizontal: 8,
   },
   oneTransactionPhoto: {
     width: 32,
     height: 32,
-    backgroundColor: '#D9D9D9',
+    backgroundColor: "#D9D9D9",
     borderRadius: 50,
     marginRight: 8,
   },
   oneTransactionTittleAndPrice: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 8,
   },
   oneTransactionTittleAndDescription: {
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   oneTransactionTittle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   oneTransactionDescription: {
-    color: '#777',
+    color: "#777",
   },
   oneTransactionPrice: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
