@@ -7,23 +7,35 @@ import {
 } from "../db/database.js";
 
 export default function HomeScreen() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [transactions, setTransactions] = useState([]); // State to store fetched transactions
+  const [transactions, setTransactions] = useState([]);
 
-  // Initialize the database when the component mounts
-  useEffect(async () => {
-    await initializeDatabase();
-    loadTransactions();
+  useEffect(() => {
+    async function initDb() {
+      try {
+        setLoading(true);
+        await initializeDatabase();
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    initDb();
+    // loadTransactions();
   }, []);
 
   // Function to load transactions from SQLite database
-  const loadTransactions = () => {
-    getTransactions(
-      (data) => setTransactions(data),
-      (error) => console.error("Error loading transactions", error)
-    );
-  };
+  // const loadTransactions = () => {
+  //   getTransactions(
+  //     (data) => setTransactions(data),
+  //     (error) => console.error("Error loading transactions", error)
+  //   );
+  // };
 
   // Function to add a transaction to SQLite database
   const handleAddTransaction = () => {
